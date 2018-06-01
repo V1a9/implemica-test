@@ -16,11 +16,6 @@ import java.util.List;
 public class FindBalancedExpressions {
 
     /**
-     * Variable that represents qty of '(' and ')' braces.
-     */
-    private double n;
-
-    /**
      * Variable that represents counting number of expression and used in generator of expressions.
      */
     private int counterOfExpressions;
@@ -43,7 +38,6 @@ public class FindBalancedExpressions {
         if (n <= 0) {
             throw new IllegalArgumentException("Number has to be > 0");
         }
-        this.n = n;
         this.counterOfExpressions = (int) Math.pow(2, n * 2) - 1;
         this.bracesQty = (int) n * 2;
     }
