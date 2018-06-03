@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<input>
+    <tests>1</tests>
+    <cities>4</cities>
+    <city id="1">
+        <name>gdansk</name>
+        <connections>2</connections>
+        <connectedCity>
+            <number>2</number>
+            <distance>1</distance>
+        </connectedCity>
+        <connectedCity>
+            <number>3</number>
+            <distance>3</distance>
+        </connectedCity>
+    </city>
+    <city id="2">
+        <name>bydgoszcz</name>
+        <connections>3</connections>
+        <connectedCity>
+            <number>1</number>
+            <distance>1</distance>
+        </connectedCity>
+        <connectedCity>
+            <number>3</number>
+            <distance>1</distance>
+        </connectedCity>
+        <connectedCity>
+            <number>4</number>
+            <distance>4</distance>
+        </connectedCity>
+    </city>
+    <city id="3">
+        <name>torun</name>
+        <connections>3</connections>
+        <connectedCity>
+            <number>1</number>
+            <distance>3</distance>
+        </connectedCity>
+        <connectedCity>
+            <number>2</number>
+            <distance>1</distance>
+        </connectedCity>
+        <connectedCity>
+            <number>4</number>
+            <distance>1</distance>
+        </connectedCity>
+    </city>
+    <city id="4">
+        <name>warszawa</name>
+        <connections>2</connections>
+        <connectedCity>
+            <number>2</number>
+            <distance>4</distance>
+        </connectedCity>
+        <connectedCity>
+            <number>3</number>
+            <distance>1</distance>
+        </connectedCity>
+    </city>
+    <pathsToFind>2</pathsToFind>
+    <path>
+        <from>gdansk</from>
+        <to>warszawa</to>
+    </path>
+    <path>
+        <from>bydgoszcz</from>
+        <to>warszawa</to>
+    </path>
+</input>
