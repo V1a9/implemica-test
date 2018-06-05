@@ -6,8 +6,8 @@ import java.math.BigInteger;
  * Class that calculates digits of 100!.
  *
  * @author Vlad Goryashko
- * @version 0.1
- * @since 31.05.18
+ * @version 0.2
+ * @since 04.06.18
  */
 public class CalcFactorialDigits {
 
@@ -24,7 +24,12 @@ public class CalcFactorialDigits {
         }
     }
 
-//    TODO finish the java docs
+    /**
+     * Method that converts factorial value to a String value and creates array of String[] filled
+     * with String representation of separate digits.
+     * After that all string values are converted to Integer and summed up.
+     * @return int sum of digits
+     */
     public int calcDigits() {
         int result = 0;
         String[] splitNumbers = CalcFactorialDigits.factorial(100).toString().split("");
