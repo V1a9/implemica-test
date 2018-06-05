@@ -3,15 +3,12 @@ package ua.vgoryashko.findshortestpath;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Class that defines City model.
  *
  * @author Vlad Goryashko
- * @version 0.1
- * @since 01.06.18
+ * @version 0.2
+ * @since 03.06.18
  */
 public class City {
 
@@ -23,22 +20,13 @@ public class City {
 
     private boolean visited;
 
-    private int distance = Integer.MAX_VALUE;
+    private int shortestDistanceFromSource = Integer.MAX_VALUE;
 
     private City previousCity;
 
+    private int[][] connectedCities;
+
     public City() {
-    }
-
-    int[][] connectedCities;
-
-    public City(String cityName, int cityNumber, int numberOfConnections, int distance, City previousCity, int[][] connectedCities) {
-        this.cityName = cityName;
-        this.cityNumber = cityNumber;
-        this.numberOfConnections = numberOfConnections;
-        this.distance = distance;
-        this.previousCity = previousCity;
-        this.connectedCities = connectedCities;
     }
 
     public String getCityName() {
@@ -73,16 +61,12 @@ public class City {
         this.visited = visited;
     }
 
-    public int getDistance() {
-        return distance;
+    public int getShortestDistanceFromSource() {
+        return shortestDistanceFromSource;
     }
 
-    public void setDistance(int distance) {
-        this.distance = distance;
-    }
-
-    public City getPreviousCity() {
-        return previousCity;
+    public void setShortestDistanceFromSource(int shortestDistanceFromSource) {
+        this.shortestDistanceFromSource = shortestDistanceFromSource;
     }
 
     public void setPreviousCity(City previousCity) {
@@ -120,7 +104,7 @@ public class City {
         return MoreObjects.toStringHelper(this).
                 add("City:", this.cityName).
                 add("number:", this.cityNumber).
-                add("distance:", this.distance).
+                add("shortestDistanceFromSource:", this.shortestDistanceFromSource).
                 add("visited:", this.visited).
                 add("previous:", this.previousCity).omitNullValues().
                 add("connectedCities:", this.connectedCities).

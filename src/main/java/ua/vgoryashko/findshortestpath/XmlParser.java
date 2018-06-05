@@ -8,37 +8,47 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.util.List;
+import java.util.Objects;
 
 /**
- * Class that parses input data from the input.xml and initializes all variables.
+ * Class that parses input data from the input.xml and initializes variables in FindShortestPath.class.
  *
  * @author Vlad Goryashko
- * @version 0.1
- * @since 03.06.18
+ * @version 0.2
+ * @since 04.06.18
  */
 public class XmlParser extends DefaultHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlParser.class);
 
+    /**
+     * File with input data.
+     */
     private String fileName;
 
+    /**
+     * City object that is created each time after respective data read from input file.
+     */
     private City city = null;
 
-    private List<City> cities;
-
-    private List<String[]> pathsToFind;
-
-    private int numberOfTests;
-
-    private int numberOfCities;
-
-    private int numberOfPathsToFind;
-
+    /**
+     * Variable that is used for creation of an array that stores an info about adjacent cities.
+     */
     private int counterOfConnectedCities = 0;
 
+    /**
+     * Array that represents a path for defining a shortest distance.
+     */
     private String[] pathToFind = null;
 
+    /**
+     * Instance of FindShortestPath.class.
+     */
+    private FindShortestPath findShortestPath;
+
+    /**
+     * Boolean variables that are used for retrieving respective values from xml elements.
+     */
     private boolean bNumberOfTests = false;
     private boolean bNumberOfCities = false;
     private boolean bNumberOfPathsToFind = false;
@@ -49,15 +59,23 @@ public class XmlParser extends DefaultHandler {
     private boolean bFrom = false;
     private boolean bTo = false;
 
-    public XmlParser(String fileName, List<City> cities, List<String[]> pathsToFind, int numberOfTests, int numberOfCities, int numberOfPathsToFind) {
+    /**
+     * Constructor for the class.
+     * @param fileName file with input data.
+     * @param findShortestPath instance of FindShortestPath.class
+     */
+    public XmlParser(final String fileName, final FindShortestPath findShortestPath) {
         this.fileName = fileName;
-        this.cities = cities;
-        this.pathsToFind = pathsToFind;
-        this.numberOfTests = numberOfTests;
-        this.numberOfCities = numberOfCities;
-        this.numberOfPathsToFind = numberOfPathsToFind;
+        this.findShortestPath = findShortestPath;
     }
 
+    /**
+     * Method that defines behavior of handler when parser starts reading a new xml element.
+     * @param uri
+     * @param localName
+     * @param qName name of an element
+     * @param attributes of an element
+     */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         switch (qName) {
@@ -85,23 +103,37 @@ public class XmlParser extends DefaultHandler {
         }
     }
 
+    /**
+     * Method that defines a behavior of handler when parser reaches the end of a xml element.
+     * Adds new city object to collection of cities.
+     * Adds new String[] of paths to collection (e.g. [bydgoszcz, warszawa])
+     * @param uri
+     * @param localName
+     * @param qName
+     */
     @Override
     public void endElement(String uri, String localName, String qName) {
         if (qName.equals("city")) {
-            cities.add(city);
+            findShortestPath.getCities().add(city);
             counterOfConnectedCities = 0;
-        } else if (qName.equals("path")) {
-            pathsToFind.add(pathToFind);
+        } else if (qName.equals("path") && findShortestPath.getPathsToFind() != null) {
+            findShortestPath.getPathsToFind().add(pathToFind);
         }
     }
 
+    /**
+     * Method that reads values of xml elements and initializes respective variables.
+     * @param ch
+     * @param start
+     * @param length
+     */
     @Override
     public void characters(char[] ch, int start, int length) {
         if (bNumberOfTests) {
-            numberOfTests = Integer.valueOf(new String(ch, start, length));
+            findShortestPath.setNumberOfTests(Integer.valueOf(new String(ch, start, length)));
             bNumberOfTests = false;
         } else if (bNumberOfCities) {
-            numberOfCities = Integer.valueOf(new String(ch, start, length));
+            findShortestPath.setNumberOfCities(Integer.valueOf(new String(ch, start, length)));
             bNumberOfCities = false;
         } else if (bName) {
             city.setCityName(new String(ch, start, length));
@@ -112,15 +144,17 @@ public class XmlParser extends DefaultHandler {
         } else if (bNumber) {
             if (city.getConnectedCities() == null) {
                 city.setConnectedCities(new int[city.getNumberOfConnections()][]);
+                for (int i = 0; i < city.getNumberOfConnections(); i++) {
+                    city.getConnectedCities()[i] = new int[2];
+                }
             }
-            city.getConnectedCities()[counterOfConnectedCities] = new int[2];
             city.getConnectedCities()[counterOfConnectedCities][0] = Integer.valueOf(new String(ch, start, length));
             bNumber = false;
         } else if (bDistance) {
             city.getConnectedCities()[counterOfConnectedCities++][1] = Integer.valueOf(new String(ch, start, length));
             bDistance = false;
         } else if (bNumberOfPathsToFind) {
-            numberOfPathsToFind = Integer.valueOf(new String(ch, start, length));
+            findShortestPath.setNumberOfPathsToFind(Integer.valueOf(new String(ch, start, length)));
             bNumberOfPathsToFind = false;
         } else if (bFrom) {
             pathToFind = new String[2];
@@ -132,6 +166,9 @@ public class XmlParser extends DefaultHandler {
         }
     }
 
+    /**
+     * Method that setting SAX parser and parses a file with input data.
+     */
     protected void parseInput() {
         SAXParserFactory spf = SAXParserFactory.newInstance();
         ClassLoader loader = FindShortestPath.class.getClassLoader();
@@ -139,14 +176,8 @@ public class XmlParser extends DefaultHandler {
         try {
             SAXParser saxParser = spf.newSAXParser();
             XMLReader xmlReader = saxParser.getXMLReader();
-            xmlReader.setContentHandler(new XmlParser(
-                    this.fileName,
-                    cities,
-                    pathsToFind,
-                    numberOfTests,
-                    numberOfCities,
-                    numberOfPathsToFind));
-            xmlReader.parse(loader.getResource(this.fileName).getPath());
+            xmlReader.setContentHandler(new XmlParser(this.fileName, this.findShortestPath));
+            xmlReader.parse(Objects.requireNonNull(loader.getResource(this.fileName)).getPath());
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
